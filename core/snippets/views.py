@@ -9,6 +9,7 @@ from snippets.models import Snippet
 from snippets.serializers import SnippetSerializer ,UserSerializer
 from snippets.permissions import IsOwnerOrReadOnly
 
+
 class SnippetList(APIView):
     permission_classes = (IsOwnerOrReadOnly, )
     

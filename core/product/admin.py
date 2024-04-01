@@ -1,15 +1,20 @@
 from django.contrib import admin
 from django.db.models import Count
 
-from .models import Category, ProductClass, Option, ProductAttribute, Product, ProductAttributeValue
+from .models import Category, ProductClass, Option, ProductAttribute, Product, ProductAttributeValue \
+                            , OptionGroup , OptionGroupValue , StockRecord
 
 
 admin.site.register(Option)
+admin.site.register(OptionGroup)
+admin.site.register(OptionGroupValue)
+admin.site.register(StockRecord)
+
 
 
 class ProductAttributeInline(admin.StackedInline):
     model = ProductAttribute
-    extra = 2
+    extra = 0
 
 
 class AttributeCountFilter(admin.SimpleListFilter):
@@ -46,16 +51,16 @@ class ProductClassAdmin(admin.ModelAdmin):
 
 class ProductCategoryInline(admin.StackedInline):
     model = Product.categories.through
-    extra = 2
+    extra = 0
 
 
 class ProductAttributeValueInline(admin.TabularInline):
     model = ProductAttributeValue
-    extra = 2
+    extra = 0
     
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug',)
+    list_display = ('title', 'slug','structure')
     inlines = [ProductAttributeValueInline,ProductCategoryInline]
     prepopulated_fields = {"slug": ("title",)}
 

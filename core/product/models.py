@@ -135,7 +135,10 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
-
+    
+    def __str__(self):
+        return self.title or 'test title'
+    
 
 class ProductAttributeValue(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -153,3 +156,11 @@ class ProductAttributeValue(models.Model):
         verbose_name_plural = "Attribute Values"
         unique_together = ('product', 'attribute')
 
+
+class StockRecord(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='stockrecords')
+    sku = models.CharField(max_length=64, null=True, blank=True, unique=True)
+    buy_price = models.PositiveBigIntegerField(null=True, blank=True)
+    sale_price = models.PositiveBigIntegerField()
+    num_stock = models.PositiveIntegerField(default=0)
+    threshold_low_stack = models.PositiveIntegerField(null=True, blank=True)

@@ -155,7 +155,7 @@ class ProductAttributeValue(models.Model):
         verbose_name = "Attribute Value"
         verbose_name_plural = "Attribute Values"
         unique_together = ('product', 'attribute')
-
+    
 
 class StockRecord(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='stockrecords')
@@ -164,3 +164,4 @@ class StockRecord(models.Model):
     sale_price = models.PositiveBigIntegerField()
     num_stock = models.PositiveIntegerField(default=0)
     threshold_low_stack = models.PositiveIntegerField(null=True, blank=True)
+

@@ -60,7 +60,6 @@ class CreateProductSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
 
-
 ######
 class OptionGroupValueSerializer(serializers.ModelSerializer):
     class Meta:
@@ -69,7 +68,7 @@ class OptionGroupValueSerializer(serializers.ModelSerializer):
         
 
 class OptiongroupSerializer(serializers.ModelSerializer):
-    value = OptionGroupValueSerializer(source='optiongroupvalue_set',many=True)
+    value = OptionGroupValueSerializer(source='optiongroupvalue_set',many=True,read_only=True)
     class Meta:
         model = OptionGroup
         fields = ('title','value')
@@ -77,7 +76,7 @@ class OptiongroupSerializer(serializers.ModelSerializer):
 
 class AttributeValueSerilizer(serializers.ModelSerializer):
 
-    option_group = OptiongroupSerializer()
+    option_group = OptiongroupSerializer(read_only=True)
     class Meta:
         model = ProductAttribute
         fields = ('title','type','option_group','required')
@@ -85,7 +84,7 @@ class AttributeValueSerilizer(serializers.ModelSerializer):
         
 class ListProductClassSerilizer(serializers.ModelSerializer):
 
-    attrs = AttributeValueSerilizer(source='attributes',many=True)
+    attrs = AttributeValueSerilizer(source='attributes',many=True,read_only=True)
     class Meta:
         model = ProductClass
         fields = ('title','description','slug','track_stock','require_shipping','attrs') 

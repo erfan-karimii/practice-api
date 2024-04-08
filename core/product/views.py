@@ -38,11 +38,31 @@ class DetailProductView(APIView):
         serializer = DetailProductSerilizer(products)
         return Response(serializer.data,status=status.HTTP_200_OK)
 
+
 class ListProductClassView(APIView):
     def get(self,request):
         product_classes = ProductClass.objects.all()
         serilizer = ListProductClassSerilizer(product_classes,many=True)
         return Response(serilizer.data,status=status.HTTP_200_OK)
+    
+    @extend_schema(
+        request=ListProductClassSerilizer,
+    )
+    def post(self,request):
+        serilizer = ListProductClassSerilizer(data=request.data)
+        if serilizer.is_valid():
+            serilizer.save()
+            return Response({'product class created successfully'},status=status.HTTP_201_CREATED)
+        else:
+            return Response(serilizer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+class ListProductAttribute(APIView):
+    def get(self,request):
+        product_classes = ProductClass.objects.all()
+        serilizer = ListProductClassSerilizer(product_classes,many=True)
+        return Response(serilizer.data,status=status.HTTP_200_OK)
+
 
 # class ListProductCategoryView(APIView):
 #     serializer_class = ListProductCategorySerilizer

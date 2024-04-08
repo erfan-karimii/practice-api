@@ -1,5 +1,8 @@
 from rest_framework import serializers
+from rest_framework.validators import ValidationError
+
 from product.models import ProductClass , ProductAttribute , OptionGroup , OptionGroupValue
+
 
 class OptionGroupValueSerializerField(serializers.ModelSerializer):
     class Meta:
@@ -22,7 +25,22 @@ class ListAttributeSerializer(serializers.ModelSerializer):
 
 
 class CreateAttributeSerializer(serializers.ModelSerializer):
-    product_class = serializers.PrimaryKeyRelatedField(queryset=ProductClass.objects.all())
+    option_group = serializers.IntegerField()
     class Meta:
         model = ProductAttribute
         fields = ('title','type','option_group','required','product_class')
+    
+    def validate_option_group(self,value):
+        obj = OptionGroup.objects.filter(id=value)
+        if obj.exists() :
+            return obj.first()
+        else:
+            return None
+    
+    def validate(self, attrs):
+        if attrs.get('type') in ['option','multi_option'] and attrs.get('option_group') == None:
+            raise ValidationError({'option_group':'Option Group must be set'})
+        else:
+            attrs['option_group'] = None
+      
+        return super().validate(attrs)

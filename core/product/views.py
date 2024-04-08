@@ -1,8 +1,10 @@
 from django.db.models import Q
+from django.http import Http404
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
 
 from drf_spectacular.utils import extend_schema
 
@@ -57,7 +59,7 @@ class ListProductClassView(APIView):
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
-class ListProductAttribute(APIView):
+class ListProductAttributeView(APIView):
     def get(self,request):
         product_attrs = ProductAttribute.objects.all()
         serilizer = ListAttributeSerializer(product_attrs,many=True)
@@ -71,6 +73,33 @@ class ListProductAttribute(APIView):
             return Response({'attribute created successfully'},status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+class DetailProductAttributeView(APIView):
+
+    def get_object(self,id):
+        try:
+            instance = ProductAttribute.objects.get(id=id)
+        except ProductAttribute.DoesNotExist:
+            raise Http404
+        
+        return instance
+
+    def get(self,request,id):
+        obj = self.get_object(id=id)
+        serializer = ListAttributeSerializer(obj)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+
+    @extend_schema(request=CreateAttributeSerializer,)
+    def put(self,request,id):
+        obj = self.get_object(id=id)
+        serializer = CreateAttributeSerializer(obj,data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        
 
 
     

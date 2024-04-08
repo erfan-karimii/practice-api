@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from product.models import Product , ProductAttribute , ProductAttributeValue
+from rest_framework.validators import ValidationError
+from product.models import Product , ProductAttribute , ProductAttributeValue , ProductClass , OptionGroupValue , OptionGroup
 
 
 class ShowTitleField(serializers.RelatedField):
@@ -7,7 +8,7 @@ class ShowTitleField(serializers.RelatedField):
         return value.title
 
 
-class AttributeSerilizer(serializers.ModelSerializer):
+class AttributeValueSerilizer(serializers.ModelSerializer):
     attr = serializers.ReadOnlyField(source='attribute.title')
     attr_type = serializers.ReadOnlyField(source='attribute.type')
     value_option = ShowTitleField(read_only=True)
@@ -20,7 +21,7 @@ class AttributeSerilizer(serializers.ModelSerializer):
 class ListProductSerilizer(serializers.ModelSerializer):
     product_class = serializers.ReadOnlyField(source='product_class.title')
     categories = ShowTitleField(read_only=True,many=True)
-    attributes = AttributeSerilizer(source='productattributevalue_set',many=True)
+    attributes = AttributeValueSerilizer(source='productattributevalue_set',many=True)
     class Meta:
         model = Product
         fields = ('id','structure','title','product_class','categories','attributes')
@@ -29,7 +30,7 @@ class ListProductSerilizer(serializers.ModelSerializer):
 class DetailProductSerilizer(serializers.ModelSerializer):
     product_class = serializers.ReadOnlyField(source='product_class.title')
     categories = ShowTitleField(read_only=True,many=True)
-    attributes = AttributeSerilizer(source='productattributevalue_set',many=True)
+    attributes = AttributeValueSerilizer(source='productattributevalue_set',many=True)
     
     class Meta:
         model = Product
@@ -37,11 +38,65 @@ class DetailProductSerilizer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CreateProductSerializer(serializers.ModelSerializer):
+    parent = serializers.IntegerField()
+    class Meta:
+        model = Product
+        fields = ('title','structure','parent','product_class','slug',)
+        
+    def validate_parent(self,value):
+        obj = Product.objects.filter(id=value)
+        if obj.exists() :
+            return obj.first()
+        else:
+            return None
+    
+    def validate(self, attrs):
+        if attrs.get('structure') != Product.ProductTypeChoice.child:
+            attrs['parent'] = None
+        elif attrs.get('parent') is None:
+            raise ValidationError({'parent':'Parent must be set'})
+      
+        return super().validate(attrs)
+
+
+
+######
+class OptionGroupValueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OptionGroupValue
+        fields = ('title',)
+        
+
+class OptiongroupSerializer(serializers.ModelSerializer):
+    value = OptionGroupValueSerializer(source='optiongroupvalue_set',many=True)
+    class Meta:
+        model = OptionGroup
+        fields = ('title','value')
+
+
+class AttributeValueSerilizer(serializers.ModelSerializer):
+
+    option_group = OptiongroupSerializer()
+    class Meta:
+        model = ProductAttribute
+        fields = ('title','type','option_group','required')
+        
+        
+class ListProductClassSerilizer(serializers.ModelSerializer):
+
+    attrs = AttributeValueSerilizer(source='attributes',many=True)
+    class Meta:
+        model = ProductClass
+        fields = ('title','description','slug','track_stock','require_shipping','attrs') 
+######            
+
+        
 class ListProductCategorySerilizer(serializers.ModelSerializer):
     product_class= serializers.ReadOnlyField(source='product_class.title')
     categories = ShowTitleField(read_only=True,many=True)
-    attributes = AttributeSerilizer(source='productattributevalue_set',many=True)
+    attributes = AttributeValueSerilizer(source='productattributevalue_set',many=True)
     class Meta:
         model = Product
         fields = ('id','structure','title','product_class','categories','attributes')
-        # exclude = ('structure','is_public')
+

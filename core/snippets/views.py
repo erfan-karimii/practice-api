@@ -12,7 +12,7 @@ from snippets.permissions import IsOwnerOrReadOnly
 
 class SnippetList(APIView):
     permission_classes = (IsOwnerOrReadOnly, )
-    
+    serializer_class = SnippetSerializer
     def get(self,request,format=None):
         snippets = Snippet.objects.all()
         serializer = SnippetSerializer(snippets,many=True)
@@ -29,7 +29,7 @@ class SnippetList(APIView):
 
 class SnippetDetail(APIView):
     permission_classes = (IsOwnerOrReadOnly, )
-    
+    serializer_class = SnippetSerializer
     def get_object(self,id):
         try:
             instance = Snippet.objects.get(id=id)
@@ -64,7 +64,8 @@ class SnippetDetail(APIView):
 
 
 class SnippetHighlight(APIView):
-    renderer_classes = [renderers.StaticHTMLRenderer]
+    renderer_classes = [renderers.StaticHTMLRenderer] 
+    serializer_class = None
     def get_object(self,id):
         try:
             instance = Snippet.objects.get(id=id)
@@ -79,6 +80,7 @@ class SnippetHighlight(APIView):
         
 
 class UserListView(APIView):
+    serializer_class = UserSerializer
     def get(self,request):
         users = User.objects.all()
         serializer = UserSerializer(users,many=True)
@@ -86,6 +88,7 @@ class UserListView(APIView):
 
 
 class UserDetailView(APIView):
+    serializer_class = UserSerializer
     def get(self,request,id):
         user = User.objects.get(id=id)
         serializer = UserSerializer(user)

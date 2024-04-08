@@ -1,14 +1,14 @@
 from django.db.models import Q
 
-from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
 from drf_spectacular.utils import extend_schema
 
-from product.serializer import ListProductClassSerilizer, ListProductSerilizer , ListProductCategorySerilizer ,DetailProductSerilizer , CreateProductSerializer
-from product.models import Product , ProductClass
+from product.serializer import ListProductClassSerializer, ListProductSerilizer ,DetailProductSerilizer , CreateProductSerializer\
+                                ,ListAttributeSerializer,CreateAttributeSerializer
+from product.models import Product , ProductClass , ProductAttribute
 # Create your views here.
 
 
@@ -42,26 +42,39 @@ class DetailProductView(APIView):
 class ListProductClassView(APIView):
     def get(self,request):
         product_classes = ProductClass.objects.all()
-        serilizer = ListProductClassSerilizer(product_classes,many=True)
-        return Response(serilizer.data,status=status.HTTP_200_OK)
+        serializer = ListProductClassSerializer(product_classes,many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
     
     @extend_schema(
-        request=ListProductClassSerilizer,
+        request=ListProductClassSerializer,
     )
     def post(self,request):
-        serilizer = ListProductClassSerilizer(data=request.data)
-        if serilizer.is_valid():
-            serilizer.save()
+        serializer = ListProductClassSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
             return Response({'product class created successfully'},status=status.HTTP_201_CREATED)
         else:
-            return Response(serilizer.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
 class ListProductAttribute(APIView):
     def get(self,request):
-        product_classes = ProductClass.objects.all()
-        serilizer = ListProductClassSerilizer(product_classes,many=True)
+        product_attrs = ProductAttribute.objects.all()
+        serilizer = ListAttributeSerializer(product_attrs,many=True)
         return Response(serilizer.data,status=status.HTTP_200_OK)
+    
+    @extend_schema(request=CreateAttributeSerializer,)
+    def post(self,request):
+        serializer = CreateAttributeSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'attribute created successfully'},status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+
+
+    
+
 
 
 # class ListProductCategoryView(APIView):

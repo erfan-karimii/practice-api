@@ -19,13 +19,26 @@ class ListAttributeValueSerializer(serializers.ModelSerializer):
 
 
 class CreateAttributeValueSerializer(serializers.ModelSerializer):
-    # value_option = serializers.PrimaryKeyRelatedField(allow_null=True, queryset=OptionGroupValue.objects.all())
+    value_option = serializers.IntegerField(allow_null=True,required=False)
+    value_multi_option = serializers.ListField(child=serializers.IntegerField())
     class Meta:
         model = ProductAttributeValue
         fields = '__all__'
     
-    def validate_value_option(self, attrs):
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.warning('yrfdetyudyfutyuastfyua')
-        return attrs
+    def validate_value_option(self, data):
+        obj = OptionGroupValue.objects.filter(id=data)
+        if obj.exists() :
+            return obj.first()
+        else:
+            return None
+    
+    def validate_value_multi_option(self,data):
+        if data  in OptionGroupValue.objects.all().values('id'):
+            data = OptionGroupValue.objects.filter(id__in=data)
+        else:
+            data = None
+        return data
+
+    # def 
+    
+    

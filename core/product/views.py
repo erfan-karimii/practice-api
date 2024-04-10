@@ -9,7 +9,7 @@ from rest_framework import status
 from drf_spectacular.utils import extend_schema
 
 from product.serializer import *
-from product.models import Product , ProductClass , ProductAttribute
+from product.models import Product , ProductClass , ProductAttribute , ProductAttributeValue
 # Create your views here.
 
 
@@ -134,6 +134,21 @@ class ListProductAttributeValue(APIView):
             return Response({'product attribute value create successfully'},status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)        
 
+
+class DetailProductValueAttribute(APIView):
+    def get_object(self,id):
+        try:
+            instance = ProductAttributeValue.objects.get(id=id)
+        except ProductAttributeValue.DoesNotExist:
+            raise Http404
+        
+        return instance
+    
+    def delete(self,request,id):
+        obj = self.get_object(id=id)
+        obj.delete()
+        return Response({'product attribute value deleted successfully'},status=status.HTTP_204_NO_CONTENT)
+    
 
     
 

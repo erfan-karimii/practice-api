@@ -39,7 +39,7 @@ class ListProductSerilizer(serializers.ModelSerializer):
 
 
 class CreateProductSerializer(serializers.ModelSerializer):
-    parent = serializers.IntegerField()
+    parent = ()
     class Meta:
         model = Product
         fields = ('title','structure','parent','product_class','slug',)

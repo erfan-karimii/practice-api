@@ -9,9 +9,8 @@ urlpatterns = [
     path('product-attr-detail/<int:id>/', views.DetailProductAttributeView.as_view()),
     path('product-attr-value-list/<int:product_id>/', views.ListRelatedProductAttributeValue.as_view()),
     path('product-attr-value-list/', views.ListProductAttributeValue.as_view()),
+    path('product-attr-value-detail/<int:id>', views.DetailProductValueAttribute.as_view()),
     
-
-
     
     # path('product-cat-list/<id>/', views.ListProductCategoryView.as_view()),
     

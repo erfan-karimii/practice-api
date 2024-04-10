@@ -80,6 +80,29 @@ class ListProductClassView(APIView):
             return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
+class DetailProductClassView(APIView):
+    def get(self,request,id):
+        product_class = get_object(id=id,class_=ProductClass)
+        serializer = ListProductClassSerializer(product_class)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+    @extend_schema(request=ListProductClassSerializer)
+    def patch(self,request,id):
+        obj = get_object(id=id,class_=ProductClass)
+        serializer = ListProductClassSerializer(obj,data=request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'product class updated successfully'},status=status.HTTP_201_CREATED)
+        else:
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        
+    
+    def delete(self,request,id):
+        obj = get_object(id=id,class_=ProductClass)
+        obj.delete()
+        return Response({'product class deleted successfully'},status=status.HTTP_204_NO_CONTENT)
+
+
 class ListProductAttributeView(APIView):
     def get(self,request):
         product_attrs = ProductAttribute.objects.all()

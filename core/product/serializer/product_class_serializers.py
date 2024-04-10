@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from product.models import ProductClass , ProductAttributeValue, ProductAttribute, OptionGroup , OptionGroupValue
+from product.models import ProductClass , ProductAttribute, OptionGroup , OptionGroupValue
 from rest_framework.validators import ValidationError
 
 

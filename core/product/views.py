@@ -5,6 +5,7 @@ from django.db.models.deletion import ProtectedError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.validators import ValidationError
 
 from drf_spectacular.utils import extend_schema
 
@@ -41,11 +42,25 @@ class DetailProductView(APIView):
         serializer = DetailProductSerializer(products)
         return Response(serializer.data,status=status.HTTP_200_OK)
     
-    # @extend_schema(request=UpdateProductSerializer)
-    # def patch(self,request,id):
-    #     obj = get_object(id=id,class_=Product)
-
-
+    @extend_schema(request=UpdateProductSerializer)
+    def patch(self,request,id):
+        obj = get_object(id=id,class_=Product)
+        serializer = UpdateProductSerializer(obj,data=request.data,partial=True)
+        if serializer.is_valid():
+            validated_product_class = serializer.validated_data.get('product_class',None)
+            
+            if obj.product_class != validated_product_class and obj.productattributevalue_set.exists():
+                raise ValidationError({'please remove product attribute values first!'})
+            
+            serializer.save()
+            return Response({'product updated successfuly'},status=status.HTTP_200_OK)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    def delete(self,request,id):
+        obj = get_object(id=id,class_=Product)
+        obj.delete()
+        return Response({'product deleted successfully'},status=status.HTTP_204_NO_CONTENT)
+        
 
 class ListProductClassView(APIView):
     def get(self,request):
@@ -82,7 +97,6 @@ class ListProductAttributeView(APIView):
 
 
 class DetailProductAttributeView(APIView):
-
     def get_object(self,id):
         try:
             instance = ProductAttribute.objects.get(id=id)

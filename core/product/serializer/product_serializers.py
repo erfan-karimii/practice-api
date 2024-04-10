@@ -63,6 +63,8 @@ class CreateProductSerializer(serializers.ModelSerializer):
 class UpdateProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ("structure","parent","title","is_public","meta_title",
+        fields = ("parent","title","is_public","meta_title",
                   "meta_description","slug","product_class")
+
+    
         

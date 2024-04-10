@@ -130,7 +130,9 @@ class ListProductAttributeValue(APIView):
     def post(self,request):
         serializer = CreateAttributeValueSerializer(data=request.data)
         if serializer.is_valid():
+            print('befor')
             serializer.save()
+            print('after')
             return Response({'product attribute value create successfully'},status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)        
 

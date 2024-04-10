@@ -29,5 +29,5 @@ class ListProductClassSerializer(serializers.ModelSerializer):
     attrs = ProductClassAttributeSerializerField(source='attributes',many=True,read_only=True)
     class Meta:
         model = ProductClass
-        fields = ('title','description','slug','track_stock','require_shipping','attrs')
+        fields = ('id','title','description','slug','track_stock','require_shipping','attrs')
 

@@ -64,15 +64,15 @@ class ProductClass(models.Model):
 
 class ProductAttribute(models.Model):
     class AttributeTypeChoice(models.TextChoices):
-        text = 'text'
-        integer = 'integer'
-        float = 'float'
-        option = 'option'
-        multi_option = 'multi_option'
+        text = 'value_text'
+        integer = 'value_integer'
+        float = 'value_float'
+        option = 'value_option'
+        multi_option = 'value_multi_option'
 
     product_class = models.ForeignKey(ProductClass, on_delete=models.CASCADE, null=True, related_name='attributes')
     title = models.CharField(max_length=64)
-    type = models.CharField(max_length=16, choices=AttributeTypeChoice.choices, default=AttributeTypeChoice.text)
+    type = models.CharField(max_length=20, choices=AttributeTypeChoice.choices, default=AttributeTypeChoice.text)
     option_group = models.ForeignKey(OptionGroup, on_delete=models.PROTECT, null=True, blank=True)
     required = models.BooleanField(default=False)
 
@@ -86,14 +86,14 @@ class ProductAttribute(models.Model):
 
 class Option(models.Model):
     class OptionTypeChoice(models.TextChoices):
-        text = 'text'
-        integer = 'integer'
-        float = 'float'
-        option = 'option'
-        multi_option = 'multi_option'
+        text = 'value_text'
+        integer = 'value_integer'
+        float = 'value_float'
+        option = 'value_option'
+        multi_option = 'value_multi_option'
 
     title = models.CharField(max_length=64)
-    type = models.CharField(max_length=16, choices=OptionTypeChoice.choices, default=OptionTypeChoice.text)
+    type = models.CharField(max_length=20, choices=OptionTypeChoice.choices, default=OptionTypeChoice.text)
     option_group = models.ForeignKey(OptionGroup, on_delete=models.PROTECT, null=True, blank=True)
     required = models.BooleanField(default=False)
 
@@ -150,6 +150,7 @@ class ProductAttributeValue(models.Model):
     value_option = models.ForeignKey(OptionGroupValue, on_delete=models.PROTECT, null=True, blank=True)
     value_multi_option = models.ManyToManyField(OptionGroupValue, blank=True,
                                                 related_name='multi_valued_attribute_value')
+
 
     class Meta:
         verbose_name = "Attribute Value"

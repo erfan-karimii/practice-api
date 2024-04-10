@@ -38,7 +38,7 @@ class CreateAttributeSerializer(serializers.ModelSerializer):
             return None
     
     def validate(self, attrs):
-        if attrs.get('type') in ['option','multi_option'] and attrs.get('option_group') == None:
+        if attrs.get('type') in ['value_option','value_multi_option'] and attrs.get('option_group') == None:
             raise ValidationError({'option_group':'Option Group must be set'})
         else:
             attrs['option_group'] = None

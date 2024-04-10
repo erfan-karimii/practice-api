@@ -7,6 +7,9 @@ urlpatterns = [
     path('product-class-list/', views.ListProductClassView.as_view()),
     path('product-attr-list/', views.ListProductAttributeView.as_view()),
     path('product-attr-detail/<int:id>/', views.DetailProductAttributeView.as_view()),
+    path('product-attr-value-list/<int:product_id>/', views.ListRelatedProductAttributeValue.as_view()),
+    path('product-attr-value-list/', views.ListProductAttributeValue.as_view()),
+    
 
 
     

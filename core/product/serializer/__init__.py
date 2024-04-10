@@ -1,4 +1,4 @@
-from .product_serializers import ListProductSerilizer , DetailProductSerilizer , CreateProductSerializer
+from .product_serializers import ListProductSerilizer , DetailProductSerializer , CreateProductSerializer , UpdateProductSerializer
 from .product_class_serializers import ListProductClassSerializer
 from .attribute_serializers import ListAttributeSerializer , CreateAttributeSerializer 
-from .attribute_value_serializers import CreateAttributeValueSerializer , ListAttributeValueSerializer
+from .attribute_value_serializers import CreateAttributeValueSerializer , ListAttributeValueSerializer, UpdateAttributeValueSerializer

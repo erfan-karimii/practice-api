@@ -18,7 +18,7 @@ class ProductAttributeSerializerField(serializers.ModelSerializer):
         fields = ('attr','attr_type','value_text','value_integer','value_float','value_option',"value_multi_option")
 
     
-class DetailProductSerilizer(serializers.ModelSerializer):
+class DetailProductSerializer(serializers.ModelSerializer):
     product_class = serializers.ReadOnlyField(source='product_class.title',required=False)
     categories = ShowTitleField(read_only=True,many=True)
     attributes = ProductAttributeSerializerField(source='productattributevalue_set',many=True)
@@ -39,7 +39,7 @@ class ListProductSerilizer(serializers.ModelSerializer):
 
 
 class CreateProductSerializer(serializers.ModelSerializer):
-    parent = ()
+    parent = serializers.IntegerField()
     class Meta:
         model = Product
         fields = ('title','structure','parent','product_class','slug',)
@@ -59,3 +59,10 @@ class CreateProductSerializer(serializers.ModelSerializer):
       
         return super().validate(attrs)
 
+
+class UpdateProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ("structure","parent","title","is_public","meta_title",
+                  "meta_description","slug","product_class")
+        

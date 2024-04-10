@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.validators import ValidationError
 
-from product.models import ProductClass , ProductAttribute , OptionGroup , OptionGroupValue
+from product.models import ProductAttributeValue , ProductAttribute , OptionGroup , OptionGroupValue
 
 
 class OptionGroupValueSerializerField(serializers.ModelSerializer):

@@ -10,6 +10,8 @@ from drf_spectacular.utils import extend_schema
 
 from product.serializer import *
 from product.models import Product , ProductClass , ProductAttribute , ProductAttributeValue
+
+from utils.db.selector import get_object
 # Create your views here.
 
 
@@ -33,11 +35,16 @@ class ListProductView(APIView):
 
 
 class DetailProductView(APIView):
-    serilizer_class = DetailProductSerilizer
+    @extend_schema(request=DetailProductSerializer)
     def get(self,request,id,*args,**kwargs):
         products = Product.objects.get(~Q(structure=Product.ProductTypeChoice.parent) & Q(is_public=True,id=id))
-        serializer = DetailProductSerilizer(products)
+        serializer = DetailProductSerializer(products)
         return Response(serializer.data,status=status.HTTP_200_OK)
+    
+    # @extend_schema(request=UpdateProductSerializer)
+    # def patch(self,request,id):
+    #     obj = get_object(id=id,class_=Product)
+
 
 
 class ListProductClassView(APIView):
@@ -150,6 +157,15 @@ class DetailProductValueAttribute(APIView):
         obj = self.get_object(id=id)
         obj.delete()
         return Response({'product attribute value deleted successfully'},status=status.HTTP_204_NO_CONTENT)
+    
+    @extend_schema(request=UpdateAttributeValueSerializer)
+    def patch(self,request,id):
+        obj = self.get_object(id=id)
+        serializer = UpdateAttributeValueSerializer(obj,data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'product updated successfuly'},status=status.HTTP_200_OK)
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
 
     

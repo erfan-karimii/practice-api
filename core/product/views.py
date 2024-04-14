@@ -22,9 +22,8 @@ class ListProductView(APIView):
         products = Product.objects.filter(~Q(structure=Product.ProductTypeChoice.child) & Q(is_public=True))
         serializer = ListProductSerilizer(products,many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
-    @extend_schema(
-        request=CreateProductSerializer,
-    )
+    
+    @extend_schema(request=CreateProductSerializer,)
     def post(self,request,*args,**kwargs):
         
         serializer = CreateProductSerializer(data=request.data)
